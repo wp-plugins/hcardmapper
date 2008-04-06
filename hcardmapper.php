@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: WP-hCardMapping
-Plugin URI: http://notizblog.org/projects/wp-hcard-commenting/
+Plugin Name: WP-hCardMapper
+Plugin URI: http://notizblog.org/projects/wp-hcardmapper/
 Description: This is a special version of <a href="http://notizblog.org/projects/wp-hcard-commenting/">wp-hcard-commenting</a>, using the <a href="http://lib.omnia-computing.de/hcardmapper">hCardMapper</a> by <a href="http://www.omnia-computing.de">Gordon Oheim</a>.
 Author: Matthias Pfefferle
 Author URI: http://notizblog.org
@@ -13,24 +13,24 @@ if (!class_exists('hKit')) {
 }
 
 if (isset($wp_version)) {
-  add_filter('query_vars', array('hCardId', 'query_vars'));
-  add_action('parse_query', array('hCardId', 'parse_hcard'));
-  add_action('init', array('hCardId', 'init'));
-  //add_filter('generate_rewrite_rules', array('hCardId', 'rewrite_rules'));
+  add_filter('query_vars', array('hCardMapper', 'query_vars'));
+  add_action('parse_query', array('hCardMapper', 'parse_hcard'));
+  add_action('init', array('hCardMapper', 'init'));
+  //add_filter('generate_rewrite_rules', array('hCardMapper', 'rewrite_rules'));
 
-  add_action('wp_head', array('hCardId', 'head'), 10);
+  add_action('wp_head', array('hCardMapper', 'head'), 10);
 }
 
-class hCardId {
+class hCardMapper {
 
-  function hCardId() { }
+  function hCardMapper() { }
 
   function init() {
     global $wp_rewrite;
     $wp_rewrite->flush_rules();
 
     //wp_enqueue_script( 'prototype', 'scriptaculous-effects' );
-    wp_enqueue_script( 'hcard-mapper', hCardId::get_path() . '/js/hcardmapper.js', array('prototype', 'scriptaculous-effects') );
+    wp_enqueue_script( 'hcardmapper', hCardMapper::get_path() . '/js/hcardmapper.js', array('prototype', 'scriptaculous-effects') );
   }
 
   /**
@@ -38,7 +38,7 @@ class hCardId {
    */
   function rewrite_rules($wp_rewrite) {
     $new_rules = array(
-      'hcard_url/(.+)' => 'index.php?hcard_url=' . $wp_rewrite->preg_index(1)
+      'hcard_url/(.+)' => 'index.php?hm_url=' . $wp_rewrite->preg_index(1)
     );
     $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
   }
@@ -46,7 +46,7 @@ class hCardId {
   function parse_hcard() {
   	global $wp_query, $wp_version;
 
-  	$url = $wp_query->query_vars['hcard_url'];
+  	$url = $wp_query->query_vars['hm_url'];
 
     $status = '200';
     $ct = 'text/plain';
@@ -77,7 +77,7 @@ class hCardId {
           $repcard = $result[0];
         }
 
-        $o = hCardId::create_json($repcard);
+        $o = hCardMapper::create_json($repcard);
         $ct = 'application/x-javascript';
       } else {
         $o = '404 Not Found';
@@ -107,7 +107,7 @@ class hCardId {
 
   function create_json($hcard) {
     // if there is more than one url
-    $hcard["url"] = hCardId::get_url($hcard["url"]);
+    $hcard["url"] = hCardMapper::get_url($hcard["url"]);
     // if there is more than one email address, take the first
     $hcard["email"] = is_array($hcard["email"]) ? $hcard["email"][0] : $hcard["email"];
 
@@ -132,7 +132,7 @@ class hCardId {
    * Set the path for the plugin.
    **/
   function get_path() {
-    $plugin = 'wp-hcard-commenting';
+    $plugin = 'hcardmapper';
 
     $base = plugin_basename(__FILE__);
     if ($base != __FILE__) {
@@ -151,7 +151,8 @@ class hCardId {
    **/
   function head() {
     if (is_single()) {
-      $css_path = hCardId::get_path() . '/css/hcardmapper.css';
+      $url_path = parse_url(get_option('siteurl'));
+      $css_path = hCardMapper::get_path() . '/css/hcardmapper.css';
       echo '<link rel="stylesheet" type="text/css" href="'.$css_path.'" />';
 
       wp_print_scripts( array( 'prototype', 'scriptaculous-effects', 'hcard-mapper' ));
@@ -161,9 +162,9 @@ class hCardId {
     Event.observe(window, 'load', function() {
       hcr = new com.omniacomputing.HCardMapper({
         register: true,
-        proxy: '<?php echo parse_url(get_option('siteurl'), PHP_URL_PATH); ?>/index.php?hcard_url=',
+        proxy: '<?php echo $url_path['path']; ?>/index.php?hm_url=',
         insertBelowEl: 'respond',
-        loadIcon: '<?php echo hCardId::get_path(); ?>/img/ajax-loader.gif',
+        loadIcon: '<?php echo hCardMapper::get_path(); ?>/img/ajax-loader.gif',
         mappings: {
           fn: 'author',
           email: 'email',
