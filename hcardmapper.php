@@ -38,7 +38,7 @@ class hCardMapper {
    */
   function rewrite_rules($wp_rewrite) {
     $new_rules = array(
-      'hcard_url/(.+)' => 'index.php?hm_url=' . $wp_rewrite->preg_index(1)
+      'hm_url/(.+)' => 'index.php?hm_url=' . $wp_rewrite->preg_index(1)
     );
     $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
   }
@@ -182,7 +182,7 @@ class hCardMapper {
    * Add 'hcard_url' as a valid query variables.
    */
   function query_vars($vars) {
-    $vars[] = 'hcard_url';
+    $vars[] = 'hm_url';
 
     return $vars;
   }
