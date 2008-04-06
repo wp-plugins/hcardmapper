@@ -38,7 +38,7 @@ class hCardMapper {
    */
   function rewrite_rules($wp_rewrite) {
     $new_rules = array(
-      'hm_url/(.+)' => 'index.php?hm_url=' . $wp_rewrite->preg_index(1)
+      'hcard_mapper_url/(.+)' => 'index.php?hcard_mapper_url=' . $wp_rewrite->preg_index(1)
     );
     $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
   }
@@ -46,7 +46,7 @@ class hCardMapper {
   function parse_hcard() {
   	global $wp_query, $wp_version;
 
-  	$url = $wp_query->query_vars['hm_url'];
+  	$url = $wp_query->query_vars['hcard_mapper_url'];
 
     $status = '200';
     $ct = 'text/plain';
@@ -162,7 +162,7 @@ class hCardMapper {
     Event.observe(window, 'load', function() {
       hcr = new com.omniacomputing.HCardMapper({
         register: true,
-        proxy: '<?php echo $url_path['path']; ?>/index.php?hm_url=',
+        proxy: '<?php echo $url_path['path']; ?>/index.php?hcard_mapper_url=',
         insertBelowEl: 'respond',
         loadIcon: '<?php echo hCardMapper::get_path(); ?>/img/ajax-loader.gif',
         mappings: {
@@ -182,7 +182,7 @@ class hCardMapper {
    * Add 'hcard_url' as a valid query variables.
    */
   function query_vars($vars) {
-    $vars[] = 'hm_url';
+    $vars[] = 'hcard_mapper_url';
 
     return $vars;
   }
