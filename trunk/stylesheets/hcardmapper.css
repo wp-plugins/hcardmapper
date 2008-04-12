@@ -1,0 +1,23 @@
+#hcr {margin:-1em 0 1em 0; width:660px}
+#hcr input {width:350px;margin: 0 1em;}
+#hcr input[type=button] {width:auto;margin:0;}
+#hcr label, input {display:inline;}
+#hcr fieldset {margin-top:16px;}
+#hcr fieldset label {font-weight: normal}
+#hcr fieldset input {display:inline; width:auto}
+#hcr fieldset #hcr-selector {display:block;margin-top:16px}
+#hcr span#hcr-status {float:right;}
+#hcr span#hcr-status img {margin:0 5px -2px 0;}
+#hcr div { 
+	margin-top:5px; 
+	background-color: #efefef; 
+	color:#222;
+	padding:1em;
+	border:1px solid #ccc
+}
+#hcr a {
+	background-image: url(/images/icons/icon-hcard-add.png);
+	background-repeat: no-repeat;
+	padding:3px 35px;
+}
+#hcr p a {background-image: none; padding: 0;}
