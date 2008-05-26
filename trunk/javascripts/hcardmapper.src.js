@@ -9,7 +9,7 @@ if (typeof com.omniacomputing != 'object') com.omniacomputing = {};
  * @copyright	Omnia Computing (www.omnia-computing.de)
  * @namespace 	com.omniacomputing
  * @license 	MIT (see file hcardmapper.license.txt)
- * @version		0.96
+ * @version		0.97
  * 
  * @classDescription
  * The HCardMapper provides methods for reading hCards from a 
@@ -244,7 +244,7 @@ com.omniacomputing.HCardMapper = function HCardMapper(config) {
 	 * below on register. Defaults to the first paragraph 
 	 * element in the form.
 	 */
-	var insertBelowEl = config.insertBelowEl || form.down('p');
+	var insertBelowEl = config.insertBelowEl || $(form).down('p');
 	
 	/**
 	 * @private {Template} uriSelector

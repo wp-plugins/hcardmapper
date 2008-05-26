@@ -169,7 +169,7 @@ new Test.Unit.Runner({
 	test_setupWithoutMappingsDoesFail: function () {
 		var hcr = new com.omniacomputing.HCardMapper();
 		this.assertNull(hcr.init);
-		this.assertNull(hcr.toggle)
+		this.assertNull(hcr.toggle);
 	},
 	
 	/**
@@ -180,12 +180,28 @@ new Test.Unit.Runner({
 	test_setupWithMappingsDoesNotFail: function () {
 		var hcr = new com.omniacomputing.HCardMapper({
 			mappings: { /* empty for testing */},
+			insertBelowEl: 'foo',
 			debug: true
 		});
 		this.assertEqual(typeof hcr.init, 'function');
-		this.assertEqual(typeof hcr.toggle, 'function')
-		this.assertEqual(typeof hcr.debug, 'function')
+		this.assertEqual(typeof hcr.toggle, 'function');
+		this.assertEqual(typeof hcr.debug, 'function');
 	},
+
+	/**
+	 * This test checks that the init method of the hCardMapper
+	 * does yield a usable hCardMapper object when mappings 
+	 * are specified in the config object. 
+	 */
+	test_setupWithoutInsertBelowElDoesNotFail: function () {
+		var hcr = new com.omniacomputing.HCardMapper({
+			mappings: { /* empty for testing */},
+			debug: true
+		});
+		this.assertEqual(typeof hcr.init, 'function');
+		this.assertEqual(typeof hcr.toggle, 'function');
+		this.assertEqual(typeof hcr.debug, 'function');
+	},	
 
 	/**
 	 * This test checks if the uriSelector template gets
@@ -197,9 +213,10 @@ new Test.Unit.Runner({
 			register: true,
 			mappings: { /* empty for testing */}
 		});
-		var insertBelowEl = document.forms[0].down('p');
-		this.assert($('hcr') instanceof HTMLElement);
-		this.assert(insertBelowEl.next() instanceof HTMLElement);
+		var insertBelowEl = $(document.forms[0]).down('p');
+		// IE does not know "instanceof HTMLElement"
+		this.assert($('hcr').nodeType === 1);
+		this.assert(insertBelowEl.next().nodeType === 1);
 		this.assertEqual($('hcr'),insertBelowEl.next());
 		Element.remove($('hcr'));
 	},
@@ -248,20 +265,24 @@ new Test.Unit.Runner({
 	 * This test checks if any malicious code is stripped
 	 * from the json to prevent xss attacks.
 	 */
-	test_maliciousElementsGetRemoved: function() {
+	test_maliciousElementsGetRemoved: function(){
 		hcr = Test.Unit.Runner.createFullHCR();
 		
 		// inserting html has no effect
 		document.forms[0].reset();
-		hcr.debug({fn: "<h1>John</h1> <script>alert('Doe')</script>"});
-		this.assertEqual($('first').value,'John'.unescapeHTML());
-		this.assertEqual($('last').value,'alert(\'Doe\')'.unescapeHTML());
-
+		hcr.debug({
+			fn: "<h1>John</h1> <script>alert('Doe')</script>"
+		});
+		this.assertEqual($('first').value, "<h1>John</h1>".unescapeHTML());
+		this.assertEqual($('last').value, "<script>alert('Doe')</script>".unescapeHTML());
+		
 		// inserting quotes has no effect  
 		document.forms[0].reset();
-		hcr.debug({fn: 'John Doe', postal_code:'"/>Peekabo!'});
-		this.assertEqual($('zip').value,'"/>Peekabo!'.unescapeHTML());
-
+		hcr.debug({
+			fn: 'John Doe',
+			postal_code: '"/>Peekabo!'
+		});
+		this.assertEqual($('zip').value, '"/>Peekabo!'.unescapeHTML());
 		Element.remove($('hcr'));
 	},
 	
